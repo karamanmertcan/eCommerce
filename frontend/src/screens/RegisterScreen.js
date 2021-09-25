@@ -14,9 +14,8 @@ const RegisterScreen = ({ location, history }) => {
   const dispatch = useDispatch();
   const { register, handleSubmit } = useForm();
 
-  const userRegister = useSelector((state) => state.userRegister);
-  const { loading, error, userInfo, message } = userRegister;
-
+  const userLogin = useSelector((state) => state.userLogin);
+  const { loading, error, userInfo, message } = userLogin;
   console.log(error);
 
   const redirect = location.search ? location.search.split('=')[1] : '/';
@@ -25,7 +24,7 @@ const RegisterScreen = ({ location, history }) => {
     if (userInfo) {
       history.push(redirect);
     }
-  }, [history, userInfo]);
+  }, [history, userInfo, redirect]);
 
   const notify = () => toast("Passwords doesn't match!!!");
 
@@ -36,6 +35,9 @@ const RegisterScreen = ({ location, history }) => {
       notify();
     } else {
       dispatch(registerUser(data.name, data.email, data.password));
+      console.log(redirect);
+
+      // history.push(redirect);
     }
   };
 
