@@ -7,7 +7,7 @@ import CheckoutSteps from '../components/CheckoutSteps';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Message from '../components/Message';
-import { createOrder } from '../actions/orderActions';
+import { createOrder, payOrder } from '../actions/orderActions';
 
 const PlaceOrderScreen = ({ history }) => {
   const dispatch = useDispatch();
@@ -16,17 +16,27 @@ const PlaceOrderScreen = ({ history }) => {
 
   //Calculate prices
 
-  const addDecimal = (num) => {
+  const addDecimals = (num) => {
     return (Math.round(num * 100) / 100).toFixed(2);
   };
 
-  cart.itemsPrice = cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0);
-  cart.shippingPrice = cart.itemPrice > 100 ? 0 : 100;
-  cart.taxPrice = addDecimal(Number((0.18 * cart.itemsPrice).toFixed(2)));
-  cart.totalPrice = Number(cart.itemsPrice) + Number(cart.shippingPrice) + Number(cart.taxPrice);
+  cart.itemsPrice = parseInt(
+    addDecimals(cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0))
+  );
+  cart.shippingPrice = parseInt(addDecimals(cart.itemsPrice > 100 ? 0 : 100));
+  cart.taxPrice = parseInt(addDecimals(Number((0.15 * cart.itemsPrice).toFixed(2))));
+  cart.totalPrice = parseInt(
+    (Number(cart.itemsPrice) + Number(cart.shippingPrice) + Number(cart.taxPrice)).toFixed(2)
+  );
+
+  console.log(cart.itemsPrice === 'number');
 
   const orderCreate = useSelector((state) => state.orderCreate);
   const { order, success, error } = orderCreate;
+  // const orderPay = useSelector((state) => state.orderPay);
+  // const { orderUrl, orderSuccess, orderError } = orderPay;
+
+  console.log(cart);
 
   useEffect(() => {
     if (success) {

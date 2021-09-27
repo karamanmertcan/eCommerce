@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Row, Col, ListGroup, Image, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,7 +7,10 @@ import CheckoutSteps from '../components/CheckoutSteps';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loader from '../components/Message';
+import { ORDER_PAY_RESET, ORDER_DELIVER_RESET } from '../constants/orderConstants';
 import { getOrderDetails } from '../actions/orderActions';
+import { payOrder } from '../actions/orderActions';
+
 import Message from '../components/Message';
 
 const OrderScreen = ({ match }) => {
@@ -17,14 +20,35 @@ const OrderScreen = ({ match }) => {
   //useDispatch hook
   const dispatch = useDispatch();
 
+  const cart = useSelector((state) => state.cart);
+  console.log(cart);
+
   const orderDetails = useSelector((state) => state.orderDetails);
   const { loading, error, order } = orderDetails;
+
+  const orderPay = useSelector((state) => state.orderPay);
+  const { orderUrl, orderSuccess, orderError, orderResponse } = orderPay;
+  console.log(orderResponse);
 
   useEffect(() => {
     if (!order || order._id !== orderId) {
       dispatch(getOrderDetails(orderId));
     }
-  }, [order, orderId]);
+
+    if (!orderSuccess || order._id !== orderId) {
+      // dispatch({ type: ORDER_PAY_RESET });
+      console.log('selam');
+    } else {
+      toast.success('Payment Successful');
+      window.location.href = orderUrl;
+    }
+  }, [order, orderId, orderSuccess]);
+
+  const checkOutHandler = () => {
+    dispatch(
+      payOrder({ cart: cart.cartItems, taxPrice: cart.taxPrice, shippingPrice: cart.shippingPrice })
+    );
+  };
 
   return loading ? (
     <Loader />
@@ -131,6 +155,9 @@ const OrderScreen = ({ match }) => {
               </Row>
             </ListGroup.Item>
             <ListGroup.Item>{error && <Message variant="danger">{error}</Message>}</ListGroup.Item>
+            <Button variant="primary" onClick={checkOutHandler}>
+              Checkout
+            </Button>{' '}
           </ListGroup>
         </Card>
       </Col>

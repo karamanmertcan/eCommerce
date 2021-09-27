@@ -4,6 +4,7 @@ import {
   ORDER_CREATE_FAILURE,
   ORDER_DETAILS_REQUEST,
   ORDER_DETAILS_SUCCESS,
+  ORDER_PAY_SUCCESS_RESPONSE,
   ORDER_DETAILS_FAILURE,
   ORDER_PAY_REQUEST,
   ORDER_PAY_SUCCESS,
@@ -40,17 +41,16 @@ export const orderDetailsReducer = (
   }
 };
 
-export const orderPayReducer = (
-  state = { loading: true, orderItems: [], shippingAddress: [] },
-  action
-) => {
+export const orderPayReducer = (state = {}, action) => {
   switch (action.type) {
     case ORDER_PAY_REQUEST:
-      return { ...state, loading: true };
+      return { loading: true };
     case ORDER_PAY_SUCCESS:
-      return { loading: false, order: action.payload };
+      return { loading: false, orderSuccess: true, orderUrl: action.payload };
+    case ORDER_PAY_SUCCESS_RESPONSE:
+      return { loading: false, orderSuccess: true, orderResponse: action.payload };
     case ORDER_PAY_FAILURE:
-      return { loading: false, error: action.payload };
+      return { loading: false, orderError: action.payload };
 
     case ORDER_PAY_RESET:
       return {};
