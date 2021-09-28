@@ -14,6 +14,7 @@ import PlaceOrderScreen from './screens/PlaceOrderScreen';
 import OrderScreen from './screens/OrderScreen';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import SuccessPayment from './screens/SuccessPayment';
 
 const App = () => {
   const stripePromise = loadStripe(
@@ -25,6 +26,7 @@ const App = () => {
         <Header />
         <main className="py-3">
           <Container>
+            <Route path="/pay/success/:id" component={SuccessPayment} exact />
             <Route path="/order/:id" component={OrderScreen} exact />
             <Route path="/placeorder" component={PlaceOrderScreen} exact />
             <Route path="/payment" component={PaymentScreen} exact />

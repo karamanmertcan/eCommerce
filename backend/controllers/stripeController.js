@@ -7,6 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const YOUR_DOMAIN = 'http://localhost:3000/';
 
 const stripePayment = asyncHandler(async (req, res) => {
+  const { orderId } = req.body;
   const session = await stripe.checkout.sessions.create({
     line_items: req.body.cart.map((item) => {
       return {
@@ -22,7 +23,7 @@ const stripePayment = asyncHandler(async (req, res) => {
     }),
     payment_method_types: ['card'],
     mode: 'payment',
-    success_url: `${YOUR_DOMAIN}?success=true`,
+    success_url: `${YOUR_DOMAIN}pay/success/${orderId}`,
     cancel_url: `${YOUR_DOMAIN}?canceled=true`
   });
   res.json({ url: session.url });

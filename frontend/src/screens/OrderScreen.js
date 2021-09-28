@@ -46,7 +46,12 @@ const OrderScreen = ({ match }) => {
 
   const checkOutHandler = () => {
     dispatch(
-      payOrder({ cart: cart.cartItems, taxPrice: cart.taxPrice, shippingPrice: cart.shippingPrice })
+      payOrder({
+        cart: cart.cartItems,
+        taxPrice: cart.taxPrice,
+        shippingPrice: cart.shippingPrice,
+        orderId: orderId
+      })
     );
   };
 

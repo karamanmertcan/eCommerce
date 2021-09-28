@@ -97,9 +97,6 @@ export const payOrder = (order) => async (dispatch, getState) => {
     };
 
     const data = await axios.post(`/create-checkout-session`, order, config);
-    const webhookData = await axios.post(`/webhook`, config);
-
-    console.log(webhookData);
 
     dispatch({
       type: ORDER_PAY_SUCCESS,
@@ -107,6 +104,42 @@ export const payOrder = (order) => async (dispatch, getState) => {
     });
 
     // dispatch({ type: ORDER_PAY_SUCCESS_RESPONSE, payload: webhookData });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message ? error.response.data.message : error.message;
+
+    dispatch({
+      type: ORDER_PAY_FAILURE,
+      payload: message
+    });
+  }
+};
+
+export const orderIsPaid = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: ORDER_PAY_REQUEST
+    });
+
+    const {
+      userLogin: { userInfo }
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`
+      }
+    };
+
+    const { data } = await axios.put(`/api/orders/${id}/pay`, config);
+
+    console.log(config);
+
+    dispatch({
+      type: ORDER_PAY_SUCCESS_RESPONSE,
+      payload: data
+    });
   } catch (error) {
     const message =
       error.response && error.response.data.message ? error.response.data.message : error.message;
