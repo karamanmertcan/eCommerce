@@ -1,22 +1,13 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { LinkContainer } from 'react-router-bootstrap';
-import { getUserDetails, logout } from '../actions/userActions';
+import { logout } from '../actions/userActions';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 
 const Header = () => {
   const dispatch = useDispatch();
   const userLogin = useSelector((state) => state.userLogin);
-
   const { userInfo } = userLogin;
-
-  const userDetails = useSelector((state) => state.userDetails);
-
-  const { user } = userDetails;
-
-  useEffect(() => {
-    dispatch(getUserDetails(userInfo._id));
-  }, [dispatch, userInfo]);
 
   const logoutHandler = () => {
     dispatch(logout());
@@ -38,7 +29,7 @@ const Header = () => {
                 </Nav.Link>
               </LinkContainer>
               {userInfo ? (
-                <NavDropdown title={user?.name} id="username">
+                <NavDropdown title={userInfo?.name} id="username">
                   <LinkContainer to="/profile">
                     <NavDropdown.Item>Profile</NavDropdown.Item>
                   </LinkContainer>
@@ -51,7 +42,7 @@ const Header = () => {
                   </Nav.Link>
                 </LinkContainer>
               )}
-              {user && user?.isAdmin && (
+              {userInfo && userInfo?.isAdmin && (
                 <NavDropdown title="Admin" id="adminmenu">
                   <LinkContainer to="/admin/userlist">
                     <NavDropdown.Item>Users</NavDropdown.Item>
